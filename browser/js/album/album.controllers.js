@@ -52,14 +52,6 @@ juke.controller('AlbumCtrl', function ($scope, $http, $rootScope, $log, StatsFac
   })
   .then(function (album) {
 
-    // Why doesn't this work?
-    // StatsFactory.totalTime(album)
-    // .then(function(time) {
-    //   album.totalTime = time;
-    //   console.log(time);
-    // })
-    // .catch($log.error);
-
     album.imageUrl = '/api/albums/' + album.id + '/image';
 
     album.songs.forEach(function (song, i) {
@@ -69,14 +61,8 @@ juke.controller('AlbumCtrl', function ($scope, $http, $rootScope, $log, StatsFac
 
     $scope.album = album;
 
-    // StatsFactory.totalTime(album)
-    // .then(function (albumDuration) {
-    //   // console.log(albumDuration);
-    //   $scope.fullDuration = albumDuration;
-    // });
-
   })
-  .catch($log.error); // $log service can be turned on and off; also, pre-bound
+  .catch($log.error); 
   
   $scope.isPlaying = PlayerFactory.isPlaying;
   $scope.getCurrentSong=PlayerFactory.getCurrentSong;
@@ -90,10 +76,9 @@ juke.controller('AlbumCtrl', function ($scope, $http, $rootScope, $log, StatsFac
   };
 
   // incoming events (from Player, toggle, or skip)
-
   $scope.$on('pause',PlayerFactory.pause);
   $scope.$on('play', function(event, song) {
-    if($scope.getCurrentSong()===song){
+    if ($scope.getCurrentSong() === song){
       PlayerFactory.resume();
     }
     else PlayerFactory.start(song, $scope.album.songs);
@@ -101,35 +86,4 @@ juke.controller('AlbumCtrl', function ($scope, $http, $rootScope, $log, StatsFac
   $scope.$on('next',PlayerFactory.next);
   $scope.$on('prev',PlayerFactory.previous);
   
-
-
-  //(REMOVED EVENTS)
-  // $scope.$on('pause', pause);
-  // $scope.$on('play', play);
-  // $scope.$on('next', next);
-  // $scope.$on('prev', prev);
-
-  // // functionality
-  // function pause () {
-  //   $scope.playing = false;
-  // }
-  // function play (event, song) {
-  //   $scope.playing = true;
-  //   $scope.currentSong = song;
-  // };
-
-  // // a "true" modulo that wraps negative to the top of the range
-  // function mod (num, m) { return ((num % m) + m) % m; };
-
-  // // jump `interval` spots in album (negative to go back, default +1)
-  // function skip (interval) {
-  //   if (!$scope.currentSong) return;
-  //   var index = $scope.currentSong.albumIndex;
-  //   index = mod( (index + (interval || 1)), $scope.album.songs.length );
-  //   $scope.currentSong = $scope.album.songs[index];
-  //   if ($scope.playing) $rootScope.$broadcast('play', $scope.currentSong);
-  // };
-  // function next () { skip(1); };
-  // function prev () { skip(-1); };
-
 });

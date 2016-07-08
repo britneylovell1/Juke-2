@@ -11,23 +11,24 @@
     <script src="/js/album/albums.controllers.js" defer></script>
     <script src="/js/player/player.controller.js" defer></script>
     <script src="/js/player/player.factory.js" defer></script>
+    <script src="/js/album/sidebar.controllers.js" defer></script>
   </head>
   <body ng-app="juke">
     <div id="main" class="container-fluid">
 
-      <div class="col-xs-2">
+      <div class="col-xs-2" ng-controller="SidebarCtrl">
         <sidebar>
           <img src="juke.svg" class="logo">
           <section>
-            <h4 class="menu-item active">
-              <a href="#">ALBUMS</a>
+            <h4 class="menu-item active" >
+              <a href="#" ng-click="viewAlbums()">ALBUMS</a>
             </h4>
           </section>
         </sidebar>
       </div>
 
       <div class="col-xs-10">
-        <div class="album" ng-controller="AlbumCtrl" ng-show="true">
+        <div class="album" ng-controller="AlbumCtrl" ng-show="false">
           <p>
             <h3>{{ album.name }} {{ fullDuration }}</h3>
             <img ng-src="{{ album.imageUrl }}" class="img-thumbnail">
@@ -56,7 +57,7 @@
           </table>
         </div>
 
-        <div ng-show="false" ng-controller="AlbumsCtrl">
+        <div ng-controller="AlbumsCtrl" ng-show="showAlbums">
           <h3>Albums</h3>
           <div class="row">
             <div class="col-xs-4" ng-repeat="album in albums">
@@ -88,8 +89,7 @@
             </button>
           </div>
           <div class="bar">
-            <div class="progress" ng-click="handleProgressClick($event)">
-            <!-- <div class="progress"> -->
+            <div class="progress">
               <div class="progress-bar" ng-style="{width: getProgress() * 100 + '%'}"></div>
             </div>
           </div>
