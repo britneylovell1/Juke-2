@@ -77,21 +77,31 @@ juke.controller('AlbumCtrl', function ($scope, $http, $rootScope, $log, StatsFac
 
   })
   .catch($log.error); // $log service can be turned on and off; also, pre-bound
+  
+  $scope.isPlaying = PlayerFactory.isPlaying;
+  $scope.getCurrentSong=PlayerFactory.getCurrentSong;
 
   // main toggle
   $scope.toggle = function (song) {
-    if ($scope.playing && song === $scope.currentSong) {
+    if ($scope.isPlaying() && song === $scope.getCurrentSong()) {
       $rootScope.$broadcast('pause');
-    } else $rootScope.$broadcast('play', song);
+    } else{ 
+      $rootScope.$broadcast('play', song);}
   };
 
   // incoming events (from Player, toggle, or skip)
 
   $scope.$on('pause',PlayerFactory.pause);
-  $scope.$on('play',PlayerFactory.start);
+  $scope.$on('play', function(event, song) {
+    if($scope.getCurrentSong()===song){
+      PlayerFactory.resume();
+    }
+    else PlayerFactory.start(song, $scope.album.songs);
+  });
   $scope.$on('next',PlayerFactory.next);
   $scope.$on('prev',PlayerFactory.previous);
   
+
 
   //(REMOVED EVENTS)
   // $scope.$on('pause', pause);

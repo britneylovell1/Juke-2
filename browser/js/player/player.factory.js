@@ -1,6 +1,6 @@
 'use strict';
 
-juke.factory('PlayerFactory', function(){
+juke.factory('PlayerFactory', function($rootScope){
   // non-UI logic in here
   var playerObj = {};
   var audio = document.createElement('audio'); 
@@ -9,6 +9,7 @@ juke.factory('PlayerFactory', function(){
   var nextSong=null;
   var previousSong=null;
   var progress = 0;
+  var currentSongList=null;
 
   function mod (num, m) { return ((num % m) + m) % m; }
 
@@ -24,15 +25,22 @@ juke.factory('PlayerFactory', function(){
 
   audio.addEventListener('timeupdate', function () {
     progress = audio.currentTime / audio.duration;
+    $rootScope.$digest();
+  });
+
+  audio.addEventListener('ended', function () {
+    playerObj.next();
+    $rootScope.$digest(); 
   });
 
   playerObj.start = function(song,songList){
+  	currentSongList = songList;
   	currentSong=song;
   	if(songList){
   		setNextSong(song,songList);
   		setPreviousSong(song,songList);
   	}
- 	this.pause();
+ 	playerObj.pause();
 	audio.src = song.audioUrl;
 	audio.load();
 	audio.play();
@@ -59,15 +67,19 @@ juke.factory('PlayerFactory', function(){
   }
 
   playerObj.next=function(){
-  	this.start(nextSong);
+  	playerObj.start(nextSong,currentSongList);
   }
 
   playerObj.previous=function(){
-  	this.start(previousSong);
+  	playerObj.start(previousSong,currentSongList);
   }
 
   playerObj.getProgress=function(){
   	return progress;
+  }
+
+  playerObj.seek=  function(decimal) {
+    audio.currentTime = audio.duration * decimal;
   }
 
   return playerObj;
